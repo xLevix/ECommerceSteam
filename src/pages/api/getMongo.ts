@@ -6,13 +6,13 @@ const handler = nc<NextApiRequest, NextApiResponse>()
     .get(async (req, res) => {
         const { db } = await connectToDatabase();
         const userId = req.query.userId;
-        const posts = await db.collection("Orders").find({ userId }).toArray();
+        const posts = await db.collection("Apps").find({ userId }).toArray();
         res.status(200).json({ success: true, data: posts });
     })
 
     .post(async (req, res) => {
         const { db } = await connectToDatabase();
-        const posts = await db.collection("Orders").insertOne(req.body);
+        const posts = await db.collection("Apps").insertOne(req.body);
         res.status(200).json({ success: true, data: posts });
     });
 
