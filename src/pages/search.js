@@ -14,12 +14,15 @@ function SearchPage() {
 
         // Dla każdej gry wykonaj zapytanie do Steam API, aby uzyskać szczegóły gry
         const gamesWithDetails = await Promise.all(games.map(async game => {
-            const steamRes = await fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}&l=english`);
-            const steamData = await steamRes.json();
-            return {
-                ...game,
-                header_image: steamData[game.appid].data.header_image
-            };
+            const steamRes = await fetch(`/api/games/${game.appid}`);
+            if (steamRes.status === 200) {
+                const steamData = await steamRes.json();
+                return {
+                    ...game,
+                    header_image: steamData[game.appid].data.header_image
+                };
+            }
+
         }));
 
         setGames(gamesWithDetails);
