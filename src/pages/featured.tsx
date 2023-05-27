@@ -31,8 +31,8 @@ function MainPage() {
                     <ImageCard
                         image={game.large_capsule_image}
                         title={game.name}
-                        price={`${game.final_price} ${game.currency}`}
-                        link={`https://store.steampowered.com/app/${game.id}`}
+                        price={`${game.final_price/100} ${game.currency}`}
+                        link={`/games/${game.id}`}
                     />
                 </Grid.Col>
             ))}

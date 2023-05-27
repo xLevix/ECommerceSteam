@@ -17,7 +17,7 @@ export default async function handler(
     }
 
     try {
-        const game = await axios.get(`https://store.steampowered.com/api/appdetails?appids=${gameId}&l=english`)
+        const game = await axios.get(`https://store.steampowered.com/api/appdetails?appids=${gameId}&cc=ar&l=en`)
         if (game.data[gameId] && game.data[gameId].success) {
             res.status(200).json(game.data[gameId].data)
         } else {

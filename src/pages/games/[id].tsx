@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Paper, Text, Title, Button, SimpleGrid,Grid } from '@mantine/core';
+import { Paper, Text, Title, Button, SimpleGrid} from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 
 interface Screenshot {
@@ -40,6 +40,18 @@ function GamePage() {
     async function getGame() {
         try {
             const response = await axios.get<Game>(`/api/games/${id}`);
+            if (response.data.price_overview && response.data.price_overview.final_formatted) {
+                const currencyRes = await fetch('/api/convert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ amount: response.data.price_overview.final / 100 }),
+                });
+
+                const { convertedAmount } = await currencyRes.json();
+                response.data.price_overview.final_formatted = (convertedAmount*1.5).toFixed(2) + ' PLN';
+            }
             setGame(response.data);
         } catch (error) {
             console.error("Failed to load game data", error);

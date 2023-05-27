@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Input, Button, Col, SimpleGrid, Grid } from '@mantine/core';
+import { Input, Button, SimpleGrid} from '@mantine/core';
 import {ImageCard} from '../components/ImageCard';
 
 function SearchPage() {
-    const history = useHistory;
     const [searchTerm, setSearchTerm] = useState('');
     const [games, setGames] = useState([]);
 
     const handleSearch = async () => {
-        //replace spaces with %20
         setSearchTerm(searchTerm.replace(' ', '%20'));
         const res = await fetch(`/api/games?name=${searchTerm}`);
         const data = await res.json();
@@ -18,24 +15,32 @@ function SearchPage() {
             games.map(async (game) => {
                 const steamRes = await fetch(`/api/games/${game.appid}`);
                 const steamData = await steamRes.json();
-                let price = '';
                 if (steamData.price_overview && steamData.price_overview.final_formatted) {
-                    price = steamData.price_overview.final_formatted;
+                    const currencyRes = await fetch('/api/convert', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ amount: steamData.price_overview.final / 100 }),
+                    });
+
+                    const { convertedAmount } = await currencyRes.json();
+                    return {
+                        ...game,
+                        header_image: steamData.header_image || '',
+                        price: (convertedAmount*1.5).toFixed(2) + ' PLN',
+                    };
+                }else{
+                    return {
+                        ...game,
+                        header_image: steamData.header_image || '',
+                        price: 'Unavailable'
+                    };
                 }
-                return {
-                    ...game,
-                    header_image: steamData.header_image || '',
-                    price,
-                };
             })
         );
 
         setGames(gamesWithDetails);
-    };
-
-
-    const handleCardClick = (id) => {
-        history.push(`/games/${id}`);
     };
 
     return (
