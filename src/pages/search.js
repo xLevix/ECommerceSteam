@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Input, Button, SimpleGrid} from '@mantine/core';
 import {ImageCard} from '../components/ImageCard';
+import {checkAuth} from '../components/auth';
+import {SteamProfile} from "../lib/passport";
 
-function SearchPage() {
+function SearchPage({user}) {
     const [searchTerm, setSearchTerm] = useState('');
     const [games, setGames] = useState([]);
 
@@ -71,4 +73,5 @@ function SearchPage() {
 );
 }
 
+export const getServerSideProps = checkAuth;
 export default SearchPage;

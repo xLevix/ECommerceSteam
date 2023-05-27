@@ -1,20 +1,21 @@
 import React, { ReactNode } from 'react';
-import { HeaderResponsive } from './Header'; // ścieżka do twojego pliku HeaderResponsive
-
-const links = [
-    { link: '/featured', label: 'Featured' },
-    { link: '/search', label: 'Search' },
-    { link: '/login', label: 'Login' },
-];
+import { HeaderResponsive } from './Header';
+import {SteamProfile} from "@/lib/passport";
 
 interface LayoutProps {
     children: ReactNode;
+    user: SteamProfile | null;
 }
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children, user }: LayoutProps) {
+    const links = [
+        { link: '/featured', label: 'Featured' },
+        { link: '/search', label: 'Search' },
+    ];
+
     return (
         <>
-            <HeaderResponsive links={links} />
+            <HeaderResponsive links={links} user={user} />
             {children}
         </>
     );

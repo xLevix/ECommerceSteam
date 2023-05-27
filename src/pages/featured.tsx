@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ImageCard } from '@/components/ImageCard';
 import { Grid } from '@mantine/core';
 import axios from 'axios';
+import { SteamProfile } from '@/lib/passport';
+import {checkAuth} from "@/components/auth";
 
 type GameData = {
     id: number;
@@ -11,7 +13,11 @@ type GameData = {
     large_capsule_image: string;
 };
 
-function MainPage() {
+type MainPageProps = {
+    user: SteamProfile | null;
+}
+
+function MainPage({ user }: MainPageProps) {
     const [data, setData] = useState<GameData[] | null>(null);
 
     useEffect(() => {
@@ -31,7 +37,7 @@ function MainPage() {
                     <ImageCard
                         image={game.large_capsule_image}
                         title={game.name}
-                        price={`${game.final_price/100} ${game.currency}`}
+                        price={`Click to see price`}
                         link={`/games/${game.id}`}
                     />
                 </Grid.Col>
@@ -40,4 +46,5 @@ function MainPage() {
     );
 }
 
+export const getServerSideProps = checkAuth;
 export default MainPage;

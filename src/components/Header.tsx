@@ -12,6 +12,9 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { MantineLogo } from '@mantine/ds';
 import { useRouter } from 'next/router';
+import {SteamProfile} from "@/lib/passport";
+import router, {NextSteamAuthApiRequest} from "@/lib/router";
+import {NextApiResponse} from "next";
 
 const HEADER_HEIGHT = rem(60);
 
@@ -86,9 +89,10 @@ const useStyles = createStyles((theme) => ({
 
 interface HeaderResponsiveProps {
     links: { link: string; label: string }[];
+    user: SteamProfile | null;
 }
 
-export function HeaderResponsive({ links }: HeaderResponsiveProps) {
+export function HeaderResponsive({ links, user }: HeaderResponsiveProps) {
     const [opened, { toggle, close }] = useDisclosure(false);
     const [active, setActive] = useState(links[0].link);
     const { classes, cx } = useStyles();
@@ -110,12 +114,20 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
         </a>
     ));
 
+    const userItem = user
+        // eslint-disable-next-line @next/next/no-html-link-for-pages
+        ? <a href="/api/auth/logout" className={classes.link}>Logout</a>
+        // eslint-disable-next-line @next/next/no-html-link-for-pages
+        : <a href="/api/auth/login" className={classes.link}><img width={"40%"} src="https://steamuserimages-a.akamaihd.net/ugc/1847053361973327003/0EF4FA6AEFED96ED05F6D30F2DD96E4BE067A641/" alt="Login"/></a>;
+
+
     return (
         <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
             <Container className={classes.header}>
                 <MantineLogo size={28} />
                 <Group spacing={5} className={classes.links}>
                     {items}
+                    {userItem}
                 </Group>
 
                 <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
@@ -124,6 +136,7 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
                     {(styles) => (
                         <Paper className={classes.dropdown} withBorder style={styles}>
                             {items}
+                            {userItem}
                         </Paper>
                     )}
                 </Transition>
@@ -131,3 +144,4 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
         </Header>
     );
 }
+

@@ -2,21 +2,26 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { MantineProvider } from '@mantine/core';
 import {Layout} from "@/components/Layout";
+import { SteamProfile } from "@/lib/passport";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-      <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={{
-            /** Put your mantine theme override here */
-            colorScheme: 'light',
-          }}
-      >
+interface MyAppProps extends AppProps {
+    pageProps: {
+        user: SteamProfile | null;
+    };
+}
 
-          <Layout>
-      <Component {...pageProps} />
+export default function App({ Component, pageProps }: MyAppProps) {
+    return (
+        <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+                colorScheme: 'light',
+            }}
+        >
+            <Layout user={pageProps.user}>
+                <Component {...pageProps} />
             </Layout>
         </MantineProvider>
-  )
+    )
 }

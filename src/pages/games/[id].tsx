@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Paper, Text, Title, Button, SimpleGrid} from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
+import {checkAuth} from "@/components/auth";
+import {SteamProfile} from "@/lib/passport";
 
 interface Screenshot {
     id: number;
@@ -26,7 +28,11 @@ interface Game {
     screenshots: Screenshot[];
 }
 
-function GamePage() {
+type GamePageProps = {
+    user: SteamProfile | null;
+}
+
+function GamePage({user}: GamePageProps) {
     const router = useRouter();
     const { id } = router.query;
     const [game, setGame] = useState<Game | null>(null);
@@ -107,4 +113,5 @@ function GamePage() {
 
 }
 
+export const getServerSideProps = checkAuth;
 export default GamePage;
