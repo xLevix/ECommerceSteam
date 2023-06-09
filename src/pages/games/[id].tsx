@@ -13,6 +13,7 @@ interface Screenshot {
 }
 
 interface Game {
+    steam_appid: number;
     name: string;
     detailed_description: string;
     header_image: string;
@@ -23,10 +24,12 @@ interface Game {
         discount_percent: number;
         initial_formatted: string;
         final_formatted: string;
+        final_formatted_usd: string;
     };
     about_the_game: string;
     screenshots: Screenshot[];
 }
+
 
 type GamePageProps = {
     user: SteamProfile | null;
@@ -46,8 +49,9 @@ function GamePage({user}: GamePageProps) {
     async function getGame() {
         try {
             const response = await axios.get<Game>(`/api/games/${id}`);
-            if (response.data.price_overview && response.data.price_overview.final_formatted) {
-                const currencyRes = await fetch('/api/convert', {
+            if (response.data.price_overview) {
+                // Convert to PLN
+                const currencyResPLN = await fetch('/api/convert', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -55,14 +59,26 @@ function GamePage({user}: GamePageProps) {
                     body: JSON.stringify({ amount: response.data.price_overview.final / 100 }),
                 });
 
-                const { convertedAmount } = await currencyRes.json();
-                response.data.price_overview.final_formatted = (convertedAmount*1.5).toFixed(2) + ' PLN';
+                const { convertedAmount: convertedAmountPLN } = await currencyResPLN.json();
+                response.data.price_overview.final_formatted = (convertedAmountPLN * 1.5).toFixed(2) + ' PLN';
+
+                const currencyResUSD = await fetch('/api/convertUSD', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ amount: response.data.price_overview.final / 100 }),
+                });
+
+                const { convertedAmount: convertedAmountUSD } = await currencyResUSD.json();
+                response.data.price_overview.final_formatted_usd = (convertedAmountUSD * 1.5).toFixed(2);
             }
             setGame(response.data);
         } catch (error) {
             console.error("Failed to load game data", error);
         }
     }
+
 
     if (!game) {
         return <p>Loading...</p>;
@@ -104,10 +120,19 @@ function GamePage({user}: GamePageProps) {
                             <Text size="xl" style={{ marginBottom: '20px' }}>
                                 {game.price_overview ? `Price: ${game.price_overview.final_formatted}` : 'Price not available'}
                             </Text>
-                            <Button color="blue" size={"lg"} fullWidth>Add to Cart</Button>
+                            <Button className={"snipcart-add-item"}
+                                    data-item-id={game.steam_appid}
+                                    data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}
+                                    data-item-url={`/games/${id}`}
+                                    data-item-description={game.detailed_description}
+                                    data-item-image={game.header_image}
+                                    data-item-name={game.name}
+                                    color="blue" size={"lg"} fullWidth
+                            >Add to Cart</Button>
+
                         </Paper>
                     </div>
-            </SimpleGrid>++++
+            </SimpleGrid>
         </SimpleGrid>
     );
 
