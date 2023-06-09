@@ -107,7 +107,7 @@ function GamePage({user}: GamePageProps) {
                             <Button color="blue" size={"lg"} fullWidth>Add to Cart</Button>
                         </Paper>
                     </div>
-            </SimpleGrid>
+            </SimpleGrid>++++
         </SimpleGrid>
     );
 
