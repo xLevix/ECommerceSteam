@@ -123,7 +123,7 @@ function GamePage({user}: GamePageProps) {
                             <Button className={"snipcart-add-item"}
                                     data-item-id={game.steam_appid}
                                     data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}
-                                    data-item-url={`/api/crawler?id=${game.steam_appid}`}
+                                    data-item-url={`https://ecommerce-steam.vercel.app/api/crawler?id=${game.steam_appid}`}
                                     data-item-description={game.detailed_description}
                                     data-item-image={game.header_image}
                                     data-item-name={game.name}
