@@ -23,8 +23,8 @@ interface Game {
         final: number;
         discount_percent: number;
         initial_formatted: string;
-        final_formatted: string;
-        final_formatted_usd: string;
+        final_formatted: number;
+        final_formatted_usd: number;
     };
     about_the_game: string;
     screenshots: Screenshot[];
@@ -60,7 +60,7 @@ function GamePage({user}: GamePageProps) {
                 });
 
                 const { convertedAmount: convertedAmountPLN } = await currencyResPLN.json();
-                response.data.price_overview.final_formatted = (convertedAmountPLN * 1.5).toFixed(2);
+                response.data.price_overview.final_formatted = parseFloat((convertedAmountPLN * 1.5).toFixed(2));
 
                 const currencyResUSD = await fetch('/api/convertUSD', {
                     method: 'POST',
@@ -71,7 +71,7 @@ function GamePage({user}: GamePageProps) {
                 });
 
                 const { convertedAmount: convertedAmountUSD } = await currencyResUSD.json();
-                response.data.price_overview.final_formatted_usd = (convertedAmountUSD * 1.5).toFixed(2);
+                response.data.price_overview.final_formatted_usd = parseFloat((convertedAmountUSD * 1.5).toFixed(2));
             }
             setGame(response.data);
         } catch (error) {
