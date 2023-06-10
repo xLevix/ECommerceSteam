@@ -120,15 +120,25 @@ function GamePage({user}: GamePageProps) {
                             <Text size="xl" style={{ marginBottom: '20px' }}>
                                 {game.price_overview ? `Price: ${game.price_overview.final_formatted_usd + ' USD'}` : 'Price not available'}
                             </Text>
-                            <Button className={"snipcart-add-item"}
-                                    data-item-id={game.steam_appid}
-                                    data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}
-                                    data-item-url={`https://ecommerce-steam.vercel.app/games/${game.steam_appid}`}
-                                    data-item-description={game.detailed_description}
-                                    data-item-image={game.header_image}
-                                    data-item-name={game.name}
-                                    color="blue" size={"lg"} fullWidth
-                            >Add to Cart</Button>
+                            {/*<Button className={"snipcart-add-item"}*/}
+                            {/*        data-item-id={game.steam_appid}*/}
+                            {/*        data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}*/}
+                            {/*        data-item-url={`https://ecommerce-steam.vercel.app/games/${game.steam_appid}`}*/}
+                            {/*        data-item-description={game.detailed_description}*/}
+                            {/*        data-item-image={game.header_image}*/}
+                            {/*        data-item-name={game.name}*/}
+                            {/*        color="blue" size={"lg"} fullWidth*/}
+                            {/*>Add to Cart</Button>*/}
+                            <button className="snipcart-add-item"
+                                    data-item-id="starry-night"
+                                    data-item-price="1.98"
+                                    data-item-description="High-quality replica of The Starry Night by the Dutch post-impressionist painter Vincent van Gogh."
+                                    data-item-image="/assets/images/starry-night.jpg"
+                                    data-item-name="The Starry Night"
+                                    data-item-url="https://ecommerce-steam.vercel.app/games/1966900"
+                            >
+                                Add to cart
+                            </button>
 
                         </Paper>
                     </div>
