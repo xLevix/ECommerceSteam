@@ -118,7 +118,7 @@ function GamePage({user}: GamePageProps) {
                         <Paper p="md" shadow="md" radius="sm" style={{height:"100%", width:"25%", float:"right", marginRight:"15%"}}>
                             <Title order={1}>{game.name}</Title>
                             <Text size="xl" style={{ marginBottom: '20px' }}>
-                                {game.price_overview ? `Price: ${game.price_overview.final_formatted}` : 'Price not available'}
+                                {game.price_overview ? `Price: ${game.price_overview.final_formatted_usd + ' USD'}` : 'Price not available'}
                             </Text>
                             <Button className={"snipcart-add-item"}
                                     data-item-id={game.steam_appid}
