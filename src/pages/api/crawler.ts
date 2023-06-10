@@ -31,7 +31,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(200).json({
             id: game.steam_appid,
             price: price.convertedAmount,
-            price2: game.price_overview.final,
             url: `https://ecommerce-steam.vercel.app/api/game/${id}`,
             customFields: [],
         });
