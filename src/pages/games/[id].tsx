@@ -120,14 +120,15 @@ function GamePage({user}: GamePageProps) {
                             <Text size="xl" style={{ marginBottom: '20px' }}>
                                 {game.price_overview ? `Price: ${game.price_overview.final_formatted_usd + ' USD'}` : 'Price not available'}
                             </Text>
-                            <button className={"snipcart-add-item"}
+                            <Button className={"snipcart-add-item"}
                                     data-item-id={game.steam_appid}
                                     data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}
-                                    data-item-url={`https://ecommerce-steam.vercel.app/api/crawler?id=${game.steam_appid}`}
+                                    data-item-url={`https://ecommerce-steam.vercel.app/games/${game.steam_appid}`}
                                     data-item-description={game.detailed_description}
                                     data-item-image={game.header_image}
                                     data-item-name={game.name}
-                            >Add to Cart</button>
+                                    color="blue" size={"lg"} fullWidth
+                            >Add to Cart</Button>
 
                         </Paper>
                     </div>
