@@ -117,7 +117,7 @@ function GamePage({user}: GamePageProps) {
                     <div>
                         <Paper p="md" shadow="md" radius="sm" style={{height:"100%", width:"25%", float:"right", marginRight:"15%"}}>
                             <Title order={1}>{game.name}</Title>
-                            <Text size="xl" style={{ marginBottom: '20px' }}>
+                            <Text itemID={"1966900"} id={"1966900"} size="xl" style={{ marginBottom: '20px' }}>
                                 {game.price_overview ? `Price: ${game.price_overview.final_formatted_usd + ' USD'}` : 'Price not available'}
                             </Text>
                             {/*<Button className={"snipcart-add-item"}*/}
