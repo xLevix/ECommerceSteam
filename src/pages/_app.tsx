@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }: MyAppProps) {
                 </Head>
                 <Component {...pageProps} />
                 <script async src="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.js"></script>
-                <div hidden id="snipcart" data-api-key="MjAxNDQwNDItNjE5ZS00MzFlLWFmNWYtZWVlMDlkNGNhMTYyNjM4MjE5NDQ4NTQ3Nzc2NDYy" data-currency="pln"></div>
+                <div hidden id="snipcart" data-api-key="MjAxNDQwNDItNjE5ZS00MzFlLWFmNWYtZWVlMDlkNGNhMTYyNjM4MjE5NDQ4NTQ3Nzc2NDYy"></div>
             </Layout>
         </MantineProvider>
     )
