@@ -130,7 +130,7 @@ function GamePage({user}: GamePageProps) {
                             {/*        color="blue" size={"lg"} fullWidth*/}
                             {/*>Add to Cart</Button>*/}
                             <button className="snipcart-add-item"
-                                    data-item-id="starry-night"
+                                    data-item-id="1966900"
                                     data-item-price="1.98"
                                     data-item-description="High-quality replica of The Starry Night by the Dutch post-impressionist painter Vincent van Gogh."
                                     data-item-image="/assets/images/starry-night.jpg"
