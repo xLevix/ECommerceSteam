@@ -12,7 +12,6 @@ export default function Index({ user }:{user: SteamProfile}) {
 			? <div>
 				Welcome back!<br />
 				From logging in, your SteamID is {user.id}.<br />
-				You can call other APIs to get more information within `getServerSideProps` or within `lib/passport.ts`.<br />
 				<Link href="/api/auth/logout">Logout</Link>
 			</div>
 

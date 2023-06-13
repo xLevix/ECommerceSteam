@@ -5,6 +5,8 @@ import { Paper, Text, Title, Button, SimpleGrid} from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import {checkAuth} from "@/components/auth";
 import {SteamProfile} from "@/lib/passport";
+import {NextApiResponse, NextPageContext} from "next";
+import {NextSteamAuthApiRequest} from "@/lib/router";
 
 interface Screenshot {
     id: number;
@@ -33,52 +35,11 @@ interface Game {
 
 type GamePageProps = {
     user: SteamProfile | null;
+    game: Game | null;
 }
 
-function GamePage({user}: GamePageProps) {
+function GamePage({user, game}: GamePageProps) {
     const router = useRouter();
-    const { id } = router.query;
-    const [game, setGame] = useState<Game | null>(null);
-
-    useEffect(() => {
-        if (id) {
-            getGame();
-        }
-    }, [id]);
-
-    async function getGame() {
-        try {
-            const response = await axios.get<Game>(`/api/games/${id}`);
-            if (response.data.price_overview) {
-                // Convert to PLN
-                const currencyResPLN = await fetch('/api/convert', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ amount: response.data.price_overview.final / 100 }),
-                });
-
-                const { convertedAmount: convertedAmountPLN } = await currencyResPLN.json();
-                response.data.price_overview.final_formatted = parseFloat((convertedAmountPLN * 1.5).toFixed(2));
-
-                const currencyResUSD = await fetch('/api/convertUSD', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ amount: response.data.price_overview.final / 100 }),
-                });
-
-                const { convertedAmount: convertedAmountUSD } = await currencyResUSD.json();
-                response.data.price_overview.final_formatted_usd = parseFloat((convertedAmountUSD * 1.5).toFixed(2));
-            }
-            setGame(response.data);
-        } catch (error) {
-            console.error("Failed to load game data", error);
-        }
-    }
-
 
     if (!game) {
         return <p>Loading...</p>;
@@ -86,8 +47,8 @@ function GamePage({user}: GamePageProps) {
 
     return (
         <SimpleGrid cols={1} spacing={"2%"}>
-                <div>
-                    <center>
+            <div>
+                <center>
                     <Carousel loop withIndicators speed={4}>
                         {game.screenshots.map((screenshot, index) => (
                             <Carousel.Slide key={index} size="100%">
@@ -101,42 +62,61 @@ function GamePage({user}: GamePageProps) {
                             </Carousel.Slide>
                         ))}
                     </Carousel>
-                    </center>
-                </div>
+                </center>
+            </div>
 
             <SimpleGrid cols={2} spacing="md">
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width:"160%"}}>
-                        <Paper p="md" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%', height: '100%' }} shadow="md" radius="sm">
-                            <div style={{ textAlign: 'center' }}>
-                                <Title order={2}>About the Game</Title>
-                                <div dangerouslySetInnerHTML={{ __html: game.detailed_description }} />
-                            </div>
-                        </Paper>
-                    </div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width:"160%"}}>
+                    <Paper p="md" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%', height: '100%' }} shadow="md" radius="sm">
+                        <div style={{ textAlign: 'center' }}>
+                            <Title order={2}>About the Game</Title>
+                            <div dangerouslySetInnerHTML={{ __html: game.detailed_description }} />
+                        </div>
+                    </Paper>
+                </div>
 
-                    <div>
-                        <Paper p="md" shadow="md" radius="sm" style={{height:"100%", width:"25%", float:"right", marginRight:"15%"}}>
-                            <Title order={1}>{game.name}</Title>
-                            <Text itemID={game.steam_appid+''} id={game.steam_appid+''} size="xl" style={{ marginBottom: '20px' }}>
-                                {game.price_overview ? `Price: ${game.price_overview.final_formatted_usd + ' USD'}` : 'Price not available'}
-                            </Text>
-                            <Button className={"snipcart-add-item"}
-                                    data-item-id={game.steam_appid}
-                                    data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}
-                                    data-item-url={`https://ecommerce-steam.vercel.app/games/${game.steam_appid}`}
-                                    data-item-description={game.detailed_description}
-                                    data-item-image={game.header_image}
-                                    data-item-name={game.name}
-                                    color="blue" size={"lg"} fullWidth
-                            >Add to Cart</Button>
+                <div>
+                    <Paper p="md" shadow="md" radius="sm" style={{height:"100%", width:"25%", float:"right", marginRight:"15%"}}>
+                        <Title order={1}>{game.name}</Title>
+                        <Text itemID={game.steam_appid+''} id={game.steam_appid+''}  size="xl" style={{ marginBottom: '20px' }}>
+                            {game.price_overview ? `Price: ${game.price_overview.final_formatted_usd + ' USD'}` : 'Price not available'}
+                        </Text>
+                        <Button className={"snipcart-add-item"}
 
-                        </Paper>
-                    </div>
+                                data-item-id={game.steam_appid}
+                                data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}
+                                data-item-url={`https://ecommerce-steam.vercel.app/games/${game.steam_appid}`}
+                                data-item-description={game.detailed_description}
+                                data-item-image={game.header_image}
+                                data-item-name={game.name}
+                                color="blue" size={"lg"} fullWidth
+                        >Add to Cart</Button>
+
+                    </Paper>
+                </div>
             </SimpleGrid>
         </SimpleGrid>
     );
-
 }
 
-export const getServerSideProps = checkAuth;
+GamePage.getInitialProps = async (ctx: NextPageContext) => {
+    const { id } = ctx.query;
+    const game = await getGame(id as string);
+
+    if (!ctx.req || !ctx.res) {
+        throw new Error("Request and response objects are required for authentication");
+    }
+
+    const user = await checkAuth({ req: ctx.req as unknown as NextSteamAuthApiRequest, res: ctx.res as unknown as NextApiResponse });
+
+    return { game, user: user.props.user };
+};
+
+
+async function getGame(id: string | string[]): Promise<Game> {
+    const response = await axios.get<Game>(`/api/games/${id}`);
+    // ...rest of getGame logic
+    return response.data;
+}
+
 export default GamePage;
