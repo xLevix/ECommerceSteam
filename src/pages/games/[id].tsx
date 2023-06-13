@@ -7,6 +7,7 @@ import {checkAuth} from "@/components/auth";
 import {SteamProfile} from "@/lib/passport";
 import {NextApiResponse, NextPageContext} from "next";
 import {NextSteamAuthApiRequest} from "@/lib/router";
+import * as process from "process";
 
 interface Screenshot {
     id: number;
@@ -114,7 +115,7 @@ GamePage.getInitialProps = async (ctx: NextPageContext) => {
 
 
 async function getGame(id: string | string[]): Promise<Game> {
-    const response = await axios.get<Game>(`/api/games/${id}`);
+    const response = await axios.get<Game>(`${process.env.DOMAIN}/api/games/${id}`);
     // ...rest of getGame logic
     return response.data;
 }
