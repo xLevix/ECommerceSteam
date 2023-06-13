@@ -1,9 +1,9 @@
 export default async function handler(req, res) {
-    if (req.method !== 'POST') {
+    if (req.method !== 'GET') {
         return res.status(405).json({ msg: 'Method not allowed' });
     }
 
-    const { amount } = req.body;
+    const { amount } = req.query;
 
     try {
         const response = await fetch('https://api.exchangerate-api.com/v4/latest/ARS');
