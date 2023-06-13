@@ -16,13 +16,10 @@ function SearchPage({user}) {
                 const steamRes = await fetch(`/api/games/${game.appid}`);
                 const steamData = await steamRes.json();
                 if (steamData.price_overview && steamData.price_overview.final_formatted) {
-                    const res = await fetch(`/api/convertUSD?amount=${steamData.price_overview.final}`);
-                    const data = await res.json();
-                    const convertedAmount = data.convertedAmount;
                     return {
                         ...game,
                         header_image: steamData.header_image || '',
-                        price: convertedAmount+ ' USD',
+                        price: steamData.price_overview.final.convertedAmount+ ' USD',
                     };
                 }else{
                     return {
