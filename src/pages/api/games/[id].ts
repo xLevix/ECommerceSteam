@@ -20,7 +20,7 @@ export default async function handler(
         const game = await axios.get(`https://store.steampowered.com/api/appdetails?appids=${gameId}&cc=ar&l=en`)
         if (game.data[gameId] && game.data[gameId].success) {
             const price = await axios.get(`${process.env.DOMAIN}/api/convertUSD?amount=${game.data[gameId].data.price_overview.final / 100}`);
-            game.data[gameId].data.price_overview.final = price.data;
+            game.data[gameId].data.price_overview.final = price.data*1.5;
             res.status(200).json(game.data[gameId].data);
         } else {
             res.status(404).json({ message: "Game not found" });
