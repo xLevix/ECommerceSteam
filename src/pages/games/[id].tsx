@@ -5,7 +5,7 @@ import { Paper, Text, Title, Button, SimpleGrid} from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import {checkAuth} from "@/components/auth";
 import {SteamProfile} from "@/lib/passport";
-import {NextApiResponse, NextPageContext} from "next";
+import {NextApiResponse, GetServerSideProps} from "next";
 import {NextSteamAuthApiRequest} from "@/lib/router";
 import * as process from "process";
 
@@ -100,17 +100,23 @@ function GamePage({user, game}: GamePageProps) {
     );
 }
 
-GamePage.getInitialProps = async (ctx: NextPageContext) => {
-    const { id } = ctx.query;
-    const game = await getGame(id as string);
-
-    if (!ctx.req || !ctx.res) {
-        throw new Error("Request and response objects are required for authentication");
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    if (!context.params || !context.params.id) {
+        // Handle the error here
+        throw new Error('No id provided');
     }
 
-    const user = await checkAuth({ req: ctx.req as unknown as NextSteamAuthApiRequest, res: ctx.res as unknown as NextApiResponse });
+    const { id } = context.params;
+    const game = await getGame(id as string);
 
-    return { game, user: user.props.user };
+    let user = null;
+    try {
+        user = await checkAuth({ req: context.req as unknown as NextSteamAuthApiRequest, res: context.res as unknown as NextApiResponse });
+    } catch (err) {
+        console.error('Error checking auth:', err);
+    }
+
+    return { props: { game, user: user?.props?.user || null } };
 };
 
 
