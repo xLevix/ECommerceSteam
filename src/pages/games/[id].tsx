@@ -121,7 +121,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
 async function getGame(id: string | string[]): Promise<Game> {
-    const response = await axios.get<Game>(`https://ecommerce-steam.vercel.app/games/api/games/${id}`);
+    const response = await axios.get<Game>(`${process.env.DOMAIN}/api/games/${id}`);
     // ...rest of getGame logic
     return response.data;
 }
