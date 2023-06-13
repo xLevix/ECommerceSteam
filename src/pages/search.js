@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { Input, Button, SimpleGrid} from '@mantine/core';
 import {ImageCard} from '../components/ImageCard';
 import {checkAuth} from '../components/auth';
-import {SteamProfile} from "../lib/passport";
 
 function SearchPage({user}) {
     const [searchTerm, setSearchTerm] = useState('');
     const [games, setGames] = useState([]);
 
     const handleSearch = async () => {
-        setSearchTerm(searchTerm.replace(' ', '%20'));
-        const res = await fetch(`/api/games?name=${searchTerm}`);
+        const res = await fetch(`/api/games?name=${searchTerm.replace(' ', '%20')}`);
         const data = await res.json();
         const games = data.data;
         const gamesWithDetails = await Promise.all(
@@ -18,19 +16,13 @@ function SearchPage({user}) {
                 const steamRes = await fetch(`/api/games/${game.appid}`);
                 const steamData = await steamRes.json();
                 if (steamData.price_overview && steamData.price_overview.final_formatted) {
-                    const currencyRes = await fetch('/api/convert', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ amount: steamData.price_overview.final / 100 }),
-                    });
-
-                    const { convertedAmount } = await currencyRes.json();
+                    const res = await fetch(`/api/convertUSD?amount=${steamData.price_overview.final}`);
+                    const data = await res.json();
+                    const convertedAmount = data.convertedAmount;
                     return {
                         ...game,
                         header_image: steamData.header_image || '',
-                        price: (convertedAmount*1.5).toFixed(2) + ' PLN',
+                        price: convertedAmount+ ' USD',
                     };
                 }else{
                     return {
@@ -62,7 +54,7 @@ function SearchPage({user}) {
                                     link={`/games/${game.appid}`}
                                     image={game.header_image}
                                     title={game.name}
-                                    price={game.price}  // Cena jest teraz stringiem
+                                    price={game.price}
                                 />
                             </div>
                         )
