@@ -23,11 +23,12 @@ interface Game {
     price_overview?: {
         currency: string;
         initial: number;
-        final: number;
         discount_percent: number;
         initial_formatted: string;
         final_formatted: number;
-        final_formatted_usd: number;
+        final?:{
+            convertedAmount: number;
+        }
     };
     about_the_game: string;
     screenshots: Screenshot[];
@@ -80,12 +81,12 @@ function GamePage({user, game}: GamePageProps) {
                     <Paper p="md" shadow="md" radius="sm" style={{height:"100%", width:"25%", float:"right", marginRight:"15%"}}>
                         <Title order={1}>{game.name}</Title>
                         <Text itemID={game.steam_appid+''} id={game.steam_appid+''}  size="xl" style={{ marginBottom: '20px' }}>
-                            {game.price_overview ? `Price: ${game.price_overview.final_formatted_usd + ' USD'}` : 'Price not available'}
+                            {game.price_overview ? `Price: ${game.price_overview.final?.convertedAmount + ' USD'}` : 'Price not available'}
                         </Text>
                         <Button className={"snipcart-add-item"}
 
                                 data-item-id={game.steam_appid}
-                                data-item-price={game.price_overview ? game.price_overview.final_formatted_usd : 'Price not available'}
+                                data-item-price={game.price_overview ? game.price_overview.final?.convertedAmount : 'Price not available'}
                                 data-item-url={`https://ecommerce-steam.vercel.app/games/${game.steam_appid}`}
                                 data-item-description={game.detailed_description}
                                 data-item-image={game.header_image}
